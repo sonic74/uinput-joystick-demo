@@ -17,7 +17,7 @@
 // userspace.
 
 int main(void)
-{ 
+{
     int fd[4];
     for (uint16_t no = 0; no < 4; no++) {
         fd[no] = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
@@ -49,22 +49,38 @@ int main(void)
         ioctl(fd[no], UI_SET_KEYBIT, BTN_DPAD_LEFT);
         ioctl(fd[no], UI_SET_KEYBIT, BTN_DPAD_RIGHT);
 
-        struct uinput_setup setup =
+        int version;
+        if (ioctl(fd[no], UI_GET_VERSION, &version))
         {
-         .name = "Userspace Joystick",
-         .id =
-         {
-          .bustype = BUS_USB,
-          .vendor = 0x289B, // doesn't get merged by MiSTer
-          .product = 3,
-          .version = 2,
-         }
-        };
-
-        if (ioctl(fd[no], UI_DEV_SETUP, &setup))
-        {
-            perror("UI_DEV_SETUP");
+            perror("UI_GET_VERSION");
             return 1;
+        }
+        printf("UI_GET_VERSION:%i\n", version);
+        if (version >= 5) {
+            /* use UI_DEV_SETUP */
+            struct uinput_setup setup =
+            {
+                .name = "Userspace Joystick",
+                .id =
+                {
+                    .bustype = BUS_USB,
+                    .vendor = 0x289B, // doesn't get merged by MiSTer
+                    .product = 3,
+                    .version = 2,
+                }
+            };
+
+            if (ioctl(fd[no], UI_DEV_SETUP, &setup))
+            {
+                perror("UI_DEV_SETUP");
+                return 1;
+            }
+
+        } else {
+            struct uinput_user_dev uud;
+            memset(&uud, 0, sizeof(uud));
+            snprintf(uud.name, UINPUT_MAX_NAME_SIZE, "uinput old interface");
+            write(fd[no], &uud, sizeof(uud));
         }
 
         if (ioctl(fd[no], UI_DEV_CREATE))
