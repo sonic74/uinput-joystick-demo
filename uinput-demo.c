@@ -79,7 +79,7 @@ int main(void)
         } else {
             struct uinput_user_dev uud;
             memset(&uud, 0, sizeof(uud));
-            snprintf(uud.name, UINPUT_MAX_NAME_SIZE, "uinput old interface");
+            snprintf(uud.name, UINPUT_MAX_NAME_SIZE, "uinput old interface %i", no);
             write(fd[no], &uud, sizeof(uud));
         }
 
