@@ -48,17 +48,19 @@ int main(int argc, char* argv[]) {
         ioctl(fd[no], UI_SET_KEYBIT, BTN_DPAD_LEFT);
         ioctl(fd[no], UI_SET_KEYBIT, BTN_DPAD_RIGHT);
 
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_LEFTCTRL);
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_SPACE);
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_COMMA);
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_DOT);
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_ENTER);
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_ESC);
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_LEFTSHIFT);
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_UP);
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_DOWN);
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_LEFT);
-        ioctl(fd[no], UI_SET_KEYBIT, KEY_RIGHT);
+        if(/*ev[i].joyno==1 &&*/ argc>1) {
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_LEFTCTRL);
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_SPACE);
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_COMMA);
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_DOT);
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_ENTER);
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_ESC);
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_LEFTSHIFT);
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_UP);
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_DOWN);
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_LEFT);
+            ioctl(fd[no], UI_SET_KEYBIT, KEY_RIGHT);
+        }
 
         int version;
         if (ioctl(fd[no], UI_GET_VERSION, &version))
