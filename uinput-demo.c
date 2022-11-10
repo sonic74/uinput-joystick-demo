@@ -16,8 +16,7 @@
 // demo showing how to provide a joystick/gamepad instance from
 // userspace.
 
-int main(void)
-{
+int main(int argc, char* argv[]) {
     int fd[4];
     for (uint16_t no = 0; no < 4; no++) {
         fd[no] = open("/dev/uinput", O_WRONLY | O_NONBLOCK);
@@ -48,6 +47,18 @@ int main(void)
         ioctl(fd[no], UI_SET_KEYBIT, BTN_DPAD_DOWN);
         ioctl(fd[no], UI_SET_KEYBIT, BTN_DPAD_LEFT);
         ioctl(fd[no], UI_SET_KEYBIT, BTN_DPAD_RIGHT);
+
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_LEFTCTRL);
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_SPACE);
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_COMMA);
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_DOT);
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_ENTER);
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_ESC);
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_LEFTSHIFT);
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_UP);
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_DOWN);
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_LEFT);
+        ioctl(fd[no], UI_SET_KEYBIT, KEY_RIGHT);
 
         int version;
         if (ioctl(fd[no], UI_GET_VERSION, &version))
@@ -158,6 +169,23 @@ for (;;) {
             int i = 0;
             while (ev[i].ev.type) {
                 printf("%i: %x, %x, %x  ", ev[i].joyno, ev[i].ev.type, ev[i].ev.code, ev[i].ev.value);
+                if(/*ev[i].joyno==1 &&*/ argc>1) {
+                    if(     ev[i].ev.code==BTN_A         ) ev[i].ev.code=KEY_LEFTCTRL;
+                    else if(ev[i].ev.code==BTN_B         ) ev[i].ev.code=KEY_SPACE;
+                    //else if(ev[i].ev.code==BTN_X         ) ev[i].ev.code=KEY_;
+                    //else if(ev[i].ev.code==BTN_Y         ) ev[i].ev.code=KEY_;
+                    else if(ev[i].ev.code==BTN_TL        ) ev[i].ev.code=KEY_COMMA;
+                    else if(ev[i].ev.code==BTN_TR        ) ev[i].ev.code=KEY_DOT;
+                    else if(ev[i].ev.code==BTN_START     ) ev[i].ev.code=KEY_ENTER;
+                    else if(ev[i].ev.code==BTN_SELECT    ) ev[i].ev.code=KEY_ESC;
+                    //else if(ev[i].ev.code==BTN_THUMBL    ) ev[i].ev.code=KEY_;
+                    else if(ev[i].ev.code==BTN_THUMBR    ) ev[i].ev.code=KEY_LEFTSHIFT;
+                    else if(ev[i].ev.code==BTN_DPAD_UP   ) ev[i].ev.code=KEY_UP;
+                    else if(ev[i].ev.code==BTN_DPAD_DOWN ) ev[i].ev.code=KEY_DOWN;
+                    else if(ev[i].ev.code==BTN_DPAD_LEFT ) ev[i].ev.code=KEY_LEFT;
+                    else if(ev[i].ev.code==BTN_DPAD_RIGHT) ev[i].ev.code=KEY_RIGHT;
+                    printf("BTN->KEY  ");
+                }
                 if ((write_size = write(fd[ev[i].joyno], &ev[i].ev, sizeof ev[i].ev)) < 0) {
                     perror("write");
                     //          return 1;
